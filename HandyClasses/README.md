@@ -15,5 +15,5 @@ tool that allow default values and obfuscated data entry for items such as passw
 ## XFragment
 
 XFragment allows for XML Fragments to to used with LINQ to XML. This is very useful with 
-EntityFramework and XML fields in Microsoft SQL Server.
+EntityFramework and XML fields in Microsoft SQL Server.  (Now Mutable!)
 

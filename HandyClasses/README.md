@@ -7,6 +7,10 @@ These classes are provided under the MIT license from Out-Of-Band Development.
 SmtpClientService is an implementation of the Microsoft.AspNet.Identity.IIdentityMessageService 
 interface that uses System.Net.Mail.SmtpClient.
 
+## Code39
+
+Simple class to generate Code39 barcodes using GDI+.
+
 ## ConsoleEx
 
 ConsoleEX allows you to create simple interactive user prompts in command line 

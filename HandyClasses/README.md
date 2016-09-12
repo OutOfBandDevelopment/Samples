@@ -27,3 +27,7 @@ CsvWriter allows any enumerable set of object to be serialized into a comma-sepe
 This will even work with IQueriable<> from Entity Framework.  All fields and columns are quoted
 and escaped based on [RFC 4180](https://tools.ietf.org/html/rfc4180).  Underscores in property
 names will be converted to spaces for field labels.
+
+## IniFile
+
+IniFile is a wrapper around the Win32 operations for reading and writing from INI files. 

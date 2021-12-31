@@ -5,6 +5,29 @@ namespace OobDev.Common.Cli
 {
     public static class ConsoleEx
     {
+        public static string ReadKey(string prompt = default, string defaultValue = default, bool show = default)
+        {
+            Console.Write($"{(string.IsNullOrWhiteSpace(prompt) ? "?" : prompt)} {(show ? defaultValue : new string(Hide, defaultValue?.Length ?? 0))}");
+            ConsoleKeyInfo key;
+            var keys = new List<char>(defaultValue);
+            while (!new[] { ConsoleKey.Enter, ConsoleKey.Escape }.Contains((key = Console.ReadKey(intercept: true)).Key))
+            {
+                if (new[] { ConsoleKey.Delete, ConsoleKey.Backspace }.Contains(key.Key) && keys.Count > 0)
+                {
+                    Console.Write("\b \b");
+                    keys.RemoveAt(keys.Count - 1);
+                }
+                else
+                {
+                    Console.Write(show ? key.KeyChar : Hide);
+                    keys.Add(key.KeyChar);
+                }
+            }
+            Console.WriteLine();
+            if (key.Key == ConsoleKey.Escape) return defaultValue;
+            return new string(keys.ToArray());
+        }
+        
         public static string Prompt(string prompt = null, string defaultValue = null)
         {
             if (!string.IsNullOrWhiteSpace(prompt))

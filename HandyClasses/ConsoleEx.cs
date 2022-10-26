@@ -5,11 +5,12 @@ namespace OobDev.Common.Cli
 {
     public static class ConsoleEx
     {
-        public static string ReadKey(string prompt = default, string defaultValue = default, bool show = default)
+        // https://github.com/OutOfBandDevelopment/Samples/blob/master/HandyClasses/ConsoleEx.cs
+        public static string? ReadKey(string? prompt = default, string? defaultValue = default, bool show = default, char hideWith = '*')
         {
-            Console.Write($"{(string.IsNullOrWhiteSpace(prompt) ? "?" : prompt)} {(show ? defaultValue : new string(Hide, defaultValue?.Length ?? 0))}");
+            Console.Write($"{(string.IsNullOrWhiteSpace(prompt) ? "?" : prompt)} {(show ? defaultValue : new string(hideWith, defaultValue?.Length ?? 0))}");
             ConsoleKeyInfo key;
-            var keys = new List<char>(defaultValue);
+            var keys = new List<char>(defaultValue ?? string.Empty);
             while (!new[] { ConsoleKey.Enter, ConsoleKey.Escape }.Contains((key = Console.ReadKey(intercept: true)).Key))
             {
                 if (new[] { ConsoleKey.Delete, ConsoleKey.Backspace }.Contains(key.Key) && keys.Count > 0)
@@ -19,16 +20,16 @@ namespace OobDev.Common.Cli
                 }
                 else
                 {
-                    Console.Write(show ? key.KeyChar : Hide);
+                    Console.Write(show ? key.KeyChar : hideWith);
                     keys.Add(key.KeyChar);
                 }
             }
             Console.WriteLine();
-            if (key.Key == ConsoleKey.Escape) return defaultValue;
+            if (key.Key == ConsoleKey.Escape) return defaultValue ?? string.Empty;
             return new string(keys.ToArray());
         }
-        
-        public static string Prompt(string prompt = null, string defaultValue = null)
+
+        public static string? Prompt(string? prompt = default, string? defaultValue = default)
         {
             if (!string.IsNullOrWhiteSpace(prompt))
                 Console.Write("{0} ", prompt);
@@ -65,7 +66,7 @@ namespace OobDev.Common.Cli
             return result;
         }
 
-        public static string PromptSecure(string prompt = null, string defaultValue = null, char hideWith = '*')
+        public static string? PromptSecure(string? prompt = default, string? defaultValue = default, char hideWith = '*')
         {
             if (!string.IsNullOrWhiteSpace(prompt))
                 Console.Write("{0} ", prompt);
@@ -78,7 +79,7 @@ namespace OobDev.Common.Cli
                 var key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.Escape)
-                    return null;
+                    return default;
                 else if (key.Key == ConsoleKey.Enter)
                     break;
                 else if (key.Key == ConsoleKey.Backspace || key.Key == ConsoleKey.Delete)

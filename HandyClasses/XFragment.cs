@@ -11,11 +11,12 @@ namespace OobDev.Common.Xml.Linq
 {
     public class XFragment : IList<XNode>
     {
+        // https://github.com/OutOfBandDevelopment/Samples/blob/master/HandyClasses/XFragment.cs
         private IList<XNode> Nodes { get; } = new List<XNode>();
 
         public XFragment(IEnumerable<XNode> nodes)
         {
-            foreach (var node in nodes ?? Enumerable.Empty<XNode>().Where(n => n != null))
+            foreach (var node in (nodes ?? Enumerable.Empty<XNode>()).Where(n => n != null))
                 this.Nodes.Add(node);
         }
 
@@ -24,16 +25,16 @@ namespace OobDev.Common.Xml.Linq
         {
         }
 
-        public XFragment(string xml)
-            : this(XFragment.Parser(xml).ToArray())
+        public XFragment(string? xml)
+            : this(Parser(xml).ToArray())
         {
         }
         public XFragment(XmlReader xmlReader)
-            : this(XFragment.Parser(xmlReader).ToArray())
+            : this(Parser(xmlReader).ToArray())
         {
         }
 
-        private static IEnumerable<XNode> Parser(string xml)
+        private static IEnumerable<XNode> Parser(string? xml)
         {
             if (string.IsNullOrWhiteSpace(xml))
                 yield break;
@@ -59,113 +60,52 @@ namespace OobDev.Common.Xml.Linq
 
             xmlReader.MoveToContent();
             while (xmlReader.ReadState != ReadState.EndOfFile)
-            {
                 yield return XNode.ReadFrom(xmlReader);
-            }
         }
 
-        public override string ToString()
-        {
-            return this;
-        }
+        public override string ToString() => this;
 
-        public XmlReader CreateReader()
+        public XmlReader CreateReader() => XmlReader.Create(new StringReader(this), new XmlReaderSettings
         {
-            return XmlReader.Create(new StringReader(this), new XmlReaderSettings
-            {
-                ConformanceLevel = ConformanceLevel.Fragment,
-            });
-        }
+            ConformanceLevel = ConformanceLevel.Fragment,
+        });
 
-        public static XFragment Parse(string xml)
-        {
-            return new XFragment(xml);
-        }
-        public static XFragment Parse(XmlReader xmlReader)
-        {
-            return new XFragment(xmlReader);
-        }
+        public static XFragment Parse(string xml) => new XFragment(xml);
+        public static XFragment Parse(XmlReader xmlReader) => new XFragment(xmlReader);
 
         #region IEnumerable 
 
-        public IEnumerator<XNode> GetEnumerator()
-        {
-            return (this.Nodes ?? Enumerable.Empty<XNode>()).Where(n => n != null).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        public IEnumerator<XNode> GetEnumerator() => (Nodes ?? Enumerable.Empty<XNode>()).Where(n => n != null).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 
         #region IList
 
-        public int Count { get { return this.Nodes.Count; } }
-        public bool IsReadOnly { get { return this.Nodes.IsReadOnly; } }
+        public int Count => Nodes.Count;
+        public bool IsReadOnly => Nodes.IsReadOnly;
         public XNode this[int index]
         {
-            get { return this.Nodes[index]; }
-            set { this.Nodes[index] = value; }
+            get => Nodes[index];
+            set => Nodes[index] = value;
         }
 
-        public int IndexOf(XNode item)
-        {
-            Contract.Requires(item != null);
-            return this.Nodes.IndexOf(item);
-        }
-
-        public void Insert(int index, XNode item)
-        {
-            Contract.Requires(item != null);
-            this.Nodes.Insert(index, item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            this.Nodes.RemoveAt(index);
-        }
-
-        public void Add(XNode item)
-        {
-            Contract.Requires(item != null);
-            this.Nodes.Add(item);
-        }
-
-        public void Clear()
-        {
-            this.Nodes.Clear();
-        }
-
-        public bool Contains(XNode item)
-        {
-            Contract.Requires(item != null);
-            return this.Nodes.Contains(item);
-        }
-
-        public void CopyTo(XNode[] array, int arrayIndex)
-        {
-            Contract.Requires(array != null);
-            this.Nodes.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(XNode item)
-        {
-            Contract.Requires(item != null);
-            return this.Nodes.Remove(item);
-        }
+        public int IndexOf(XNode item) => Nodes.IndexOf(item);
+        public void Insert(int index, XNode item) => Nodes.Insert(index, item);
+        public void RemoveAt(int index) => Nodes.RemoveAt(index);
+        public void Add(XNode item) => Nodes.Add(item);
+        public void Clear() => Nodes.Clear();
+        public bool Contains(XNode item) => Nodes.Contains(item);
+        public void CopyTo(XNode[] array, int arrayIndex) => Nodes.CopyTo(array, arrayIndex);
+        public bool Remove(XNode item) => Nodes.Remove(item);
 
         #endregion
 
         #region Conversions 
 
-        public static implicit operator XFragment(string xml)
-        {
-            return new XFragment(xml);
-        }
+        public static implicit operator XFragment(string? xml) => new XFragment(xml);
 
-        public static implicit operator string (XFragment fragment)
+        public static implicit operator string?(XFragment fragment)
         {
             if (fragment == null)
                 return null;
@@ -187,15 +127,9 @@ namespace OobDev.Common.Xml.Linq
             return sb.ToString();
         }
 
-        public static implicit operator XFragment(XNode[] nodes)
-        {
-            return new XFragment(nodes);
-        }
+        public static implicit operator XFragment(XNode[] nodes) => new XFragment(nodes);
 
-        public static implicit operator XFragment(XNode node)
-        {
-            return new XFragment(node);
-        }
+        public static implicit operator XFragment(XNode node) => new XFragment(node);
 
         #endregion
     }
